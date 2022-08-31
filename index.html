@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Calculator rent car</title>
+</head>
+
+<body>
+    <form>
+        <fieldset>
+            <legend>Rent Your Car</legend>
+            <label for="howKm">Choose your limit<span id="kmSpan"> 500 km</span></label>
+            <input type="range" id="howKm" min="100" max="5000" value="500">
+            <label for="drivingd">Driving licence</label>
+            <input type="number" id="drivingId" required min="1960" max="2022" value="2022" required>
+            <span class="error" id="limit"></span>
+            <label for="startRent">Start rent</label>
+            <input type="date" id="startRent" required>
+            <span class="error" id="infoStartRent"></span>
+            <label for="endRent">End rent</label>
+            <input type="date" id="endRent" required>
+            <span class="error" id="infoEndRent"></span>
+            <label for="carList">Select your model</label>
+            <select name="carList" id="carList" required>
+                <option value=""></option>
+                <option value="basic">basic</option>
+                <option value="standard">standard</option>
+                <option value="medium">medium</option>
+                <option value="premium">premium</option>
+            </select>
+            <span class="error" id="carListError"></span>
+            <label for="location">select your location</label>
+            <select name="location" id="location">
+                <option value=""></option>
+                <option value="rzeszow">rzeszów</option>
+                <option value="krakow">kraków</option>
+            </select>
+            <span class="error" id="locationInfo"></span>
+            <button type="submit" id="rent">Rent Car</button>
+        </fieldset>
+    </form>
+    <div>
+        <h1>Car rent raport</h1>
+        <div>
+            <p id="raport"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
