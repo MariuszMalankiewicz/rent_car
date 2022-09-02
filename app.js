@@ -36,12 +36,7 @@ const city = {
         }
     }
 }
-
-
-// range slider
 const howKm = document.getElementById('howKm');
-const kmSpan = document.getElementById('kmSpan');
-
 const fuel = 6.60;
 const rentalPrice = 5;
 
@@ -50,130 +45,182 @@ const startRent = document.getElementById("startRent");
 const endRent = document.getElementById("endRent");
 const model = document.getElementById("carList");
 const localization = document.getElementById("location");
-
-let rezult = '';
-// error
-const limit = document.getElementById("limit");
-const carListError = document.getElementById("carListError");
-
-
+let flag;
 // slider value
-howKm.addEventListener("input", ()=>{
-    kmSpan.innerHTML = ` ${howKm.value} km`;
-})
-
-// time
-let today = new Date();
-let dd = today.getDate();
-let mm = today.getMonth() + 1; //January is 0!
-let yyyy = today.getFullYear();
-if (dd < 10) {
-   dd = '0' + dd;
+function sliderValue() {
+    howKm.addEventListener("input", ()=>{
+        document.getElementById('kmSpan').innerHTML = ` ${howKm.value} km`;
+    })
 }
-if (mm < 10) {
-   mm = '0' + mm;
+// Set min att to date
+function minTodayDate(){
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1; //January is 0!
+    let yyyy = today.getFullYear();
+    if (dd < 10) {
+       dd = '0' + dd;
+    }
+    if (mm < 10) {
+       mm = '0' + mm;
+    }
+    today = yyyy + '-' + mm + '-' + dd;
+    
+    startRent.setAttribute("min", today);
+    endRent.setAttribute("min", today);
 }
-today = yyyy + '-' + mm + '-' + dd;
-
-startRent.setAttribute("min", today);
-endRent.setAttribute("min", today);
-
-
+// check info
+function checkDriving()
+{
+    if(drivingLicence.value < 1960 || drivingLicence.value > 2022){
+        document.getElementById("limit").innerHTML = "choose form 1960 to 2022";
+        flag = false;
+    }
+    else{
+        document.getElementById("limit").innerHTML = "";
+        flag = true;
+    }
+}
+function checkFirstDate()  
+{
+    // first date
+    if(startRent.value === ''){
+        document.getElementById("infoStartRent").innerHTML = "choose date!";
+        flag = false;
+    }else{
+        document.getElementById("infoStartRent").innerHTML = "";
+        flag = true;
+    }    
+}
+function checkSecoundDate() {
+    if(endRent.value === ''){
+        document.getElementById("infoEndRent").innerHTML = "choose date!";
+        flag = false;
+    }else{
+        document.getElementById("infoEndRent").innerHTML = "";
+        flag = true;
+    }
+}
+function drivingExperience()
+{
+    if(drivingLicence.value > 2019 && model.value === "premium"){
+        document.getElementById("carListError").innerHTML = "you have too little driving experience";
+        flag = false;
+    }else{
+        document.getElementById("carListError").innerHTML = "";
+    }
+}
+function SameDate()
+{
+    if(startRent.value === endRent.value && startRent.value != '' && endRent.value != ''){
+        document.getElementById("infoEndRent").innerHTML = "min 24 hour";
+        flag = false;
+    }
+}
+function DateTrickster() {
+    if(startRent.value > endRent.value && startRent.value != '' && endRent.value != ''){
+        document.getElementById("infoEndRent").innerHTML = "you are a trickster";
+        flag = false;
+    }
+}
+sliderValue();
+minTodayDate();
 // check send
 document.getElementById('rent').addEventListener('click', (e)=>{
     e.preventDefault();
-    // driveID check
-    if(drivingLicence.value < 1960 || drivingLicence.value > 2022){
-        drivingLicence.style.borderColor = "red"
-        limit.innerHTML = "choose form 1960 to 2022";
-        return
-    }
-    else{
-        drivingLicence.style.borderColor = "green"
-        limit.innerHTML = "";
-        // first date
-        if(startRent.value === ''){
-            startRent.style.borderColor = "red";
-            document.getElementById("infoStartRent").innerHTML = "choose date!";
-        }else{
-            startRent.style.borderColor = "green";
-            document.getElementById("infoStartRent").innerHTML = "";
-            // secound date
-            if(endRent.value === ''){
-                endRent.style.borderColor = "red";
-                document.getElementById("infoEndRent").innerHTML = "choose date!";
-            }else{
-                endRent.style.borderColor = "green";
-                document.getElementById("infoEndRent").innerHTML = "";
-                // date === date
-                if(startRent.value === endRent.value){
-                    document.getElementById("infoEndRent").innerHTML = "min 24 hour";
-                }else{
-                    document.getElementById("infoEndRent").innerHTML = "";
-                        if(model.value === ''){
-                            model.style.borderColor = "red"
-                            carListError.innerHTML = "choose model";
-                        }else{
-                            model.style.borderColor = "green"
-                            carListError.innerHTML = "";
-                            if(localization.value === ""){
-                                localization.style.borderColor = "red"
-                                document.getElementById("locationInfo").innerHTML = "choose location";
-                            }else{
-                                localization.style.borderColor = "green"
-                                document.getElementById("locationInfo").innerHTML = "";
-                                if(drivingLicence.value < 2020 && model.value === "premium"){
-                                    model.style.borderColor = "red"
-                                    carListError.innerHTML = "you have too little driving experience";
-                                }else{
-                                    model.style.borderColor = "green"
-                                    carListError.innerHTML = "";
-                                if(model.value === "basic"){
-                                    modelTax = 1;
-                                }
-                                else if(model.value === "standard"){
-                                    modelTax = 1.3
-                                }
-                                else if(model.value === "medium"){
-                                    modelTax = 1.6
-                                }
-                                else if(model.value === "premium"){
-                                    modelTax = 2
-                                }
-                                // check date
-                                let date1 = new Date(startRent.value)
-                                let date2 = new Date(endRent.value)
-                                let oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-                                let diffDays = Math.abs((date1.getTime() - date2.getTime()) / (oneDay));
+    checkDriving();
+    checkFirstDate();
+    checkSecoundDate();
+    drivingExperience();
+    SameDate();
+    DateTrickster();
 
-                                // math
-                                rezult = rentalPrice * modelTax * diffDays;
+    console.log(flag);
+    if(flag === true){
+        let rezult;
+        let diffDays;
 
-                                 // driveId < 5 20% more
-                                if(drivingLicence.value < 2018){
-                                    rezult += rezult * 0.2;
-                                    less5dID = 'yes'
-                                }else{
-                                    less5dID = 'no'
-                                }
-                                document.getElementById("raport").innerHTML=`
-                                Rental tax: ${rentalPrice} zł </br>
-                                How day: ${diffDays} day </br>
-                                Model tax: ${modelTax} zł </br>
-                                Fuel: ${fuel} zł </br>
-                                How Km: ${howKm.value} zł </br>
-                                less than 5 years old driving license: ${less5dID} <br>
-                                City: ${localization.value} </br>
-                                Rezult netto: ${rezult}zł </br>
-                                Rezult brutto: ${rezult += rezult * 0.23} zł </br>
-                                `
-                            }
-                        }
-                    }
-                }
+        function CalcModelTax() {
+            if(model.value === "basic"){
+                modelTax = 1;
             }
+            else if(model.value === "standard"){
+                modelTax = 1.3
+            }
+            else if(model.value === "medium"){
+                modelTax = 1.6
+            }
+            else if(model.value === "premium"){
+                modelTax = 2
+            }  
         }
+        // diff Date
+        function calcDiffDays(){
+            let date1 = new Date(startRent.value)
+            let date2 = new Date(endRent.value)
+            let oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            diffDays = Math.abs((date1.getTime() - date2.getTime()) / (oneDay));
+        }
+        // driveId < 5 20% more
+        function CheckExpDriveId() {
+            if(drivingLicence.value > 2017){
+                rezult += rezult * 0.2;
+                less5dID = 'yes'
+            }else{
+                less5dID = 'no'
+            }     
+        }
+        // check count car if < 3 then 15% pay more
+        function calcCountCar() {
+            if(model.value === "premium" && localization.value === "rzeszow"){
+                rezult += rezult * 0.15;
+                lessCar = "yes"
+            }else[
+                lessCar = "no"
+            ]
+        }
+        // math
+        function calcRezult() {
+            rezult = rentalPrice * modelTax * diffDays;
+        }
+
+
+
+
+        CalcModelTax();
+        calcDiffDays();
+        calcRezult()
+        CheckExpDriveId();
+        calcCountCar();
+
+
+
+        
+        document.getElementById("raport").innerHTML=
+        `
+        How day: ${diffDays} </br></br>
+
+        How Km: ${howKm.value} </br>
+        Fuel price: ${fuel} zł </br></br>
+
+        Model tax: ${modelTax} zł </br>
+        Rental tax per day: ${rentalPrice} zł </br></br>
+        
+
+        Less than 5 years old driving license (20% more): ${less5dID} </br>
+        Less than 3 cars (15% more): ${lessCar} </br></br>
+
+        City: ${localization.value} </br></br>
+
+        Rezult netto: ${rezult}zł </br>
+        Rezult brutto: ${rezult += rezult * 0.23} zł </br>
+        `
+    }else{
+        document.getElementById("raport").innerHTML = '';
+        return;
     }
+
+
 })
 
     

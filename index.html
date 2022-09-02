@@ -16,17 +16,16 @@
             <label for="howKm">Choose your limit<span id="kmSpan"> 500 km</span></label>
             <input type="range" id="howKm" min="100" max="5000" value="500">
             <label for="drivingd">Driving licence</label>
-            <input type="number" id="drivingId" required min="1960" max="2022" value="2022" required>
+            <input type="number" id="drivingId" value="2022" min="1960" max="2022">
             <span class="error" id="limit"></span>
             <label for="startRent">Start rent</label>
-            <input type="date" id="startRent" required>
+            <input type="date" id="startRent">
             <span class="error" id="infoStartRent"></span>
             <label for="endRent">End rent</label>
-            <input type="date" id="endRent" required>
+            <input type="date" id="endRent">
             <span class="error" id="infoEndRent"></span>
             <label for="carList">Select your model</label>
-            <select name="carList" id="carList" required>
-                <option value=""></option>
+            <select name="carList" id="carList">
                 <option value="basic">basic</option>
                 <option value="standard">standard</option>
                 <option value="medium">medium</option>
@@ -35,11 +34,9 @@
             <span class="error" id="carListError"></span>
             <label for="location">select your location</label>
             <select name="location" id="location">
-                <option value=""></option>
-                <option value="rzeszow">rzeszów</option>
-                <option value="krakow">kraków</option>
+                <option value="rzeszow">Rzeszów</option>
+                <option value="krakow">Kraków</option>
             </select>
-            <span class="error" id="locationInfo"></span>
             <button type="submit" id="rent">Rent Car</button>
         </fieldset>
     </form>
