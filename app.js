@@ -1,37 +1,29 @@
 const city = {
     rzeszow:{
         basic:{
-            fuelUse: 6,
             count: 15,
         },
         standard:{
-            fuelUse: 7.3,
             count: 10,
         },
         medium:{
-            fuelUse: 9.6,
             count: 5,
         },
         premium:{
-            fuelUse: 12,
             count: 1,
         }
     },
     krakow:{
         basic:{
-            fuelUse: 6,
             count: 30,
         },
         standard:{
-            fuelUse: 7.3,
             count: 15,
         },
         medium:{
-            fuelUse: 9.6,
             count: 10,
         },
         premium:{
-            fuelUse: 12,
             count: 3,
         }
     }
@@ -54,6 +46,7 @@ function sliderValue() {
 }
 // Set min att to date
 function minTodayDate(){
+    // let day30 = today * 30;
     let today = new Date();
     let dd = today.getDate();
     let mm = today.getMonth() + 1; //January is 0!
@@ -65,7 +58,7 @@ function minTodayDate(){
        mm = '0' + mm;
     }
     today = yyyy + '-' + mm + '-' + dd;
-    
+
     startRent.setAttribute("min", today);
     endRent.setAttribute("min", today);
 }
@@ -138,20 +131,25 @@ document.getElementById('rent').addEventListener('click', (e)=>{
     console.log(flag);
     if(flag === true){
         let rezult;
-        let diffDays;
+        let modelTax;
+        let combustion;
 
-        function CalcModelTax() {
+        function checkModelTaxAndCombustion() {
             if(model.value === "basic"){
                 modelTax = 1;
+                combustion = 6;
             }
             else if(model.value === "standard"){
-                modelTax = 1.3
+                modelTax = 1.3;
+                combustion = 7.3;
             }
             else if(model.value === "medium"){
-                modelTax = 1.6
+                modelTax = 1.6;
+                combustion = 9.6;
             }
             else if(model.value === "premium"){
                 modelTax = 2
+                combustion = 12;
             }  
         }
         // diff Date
@@ -160,6 +158,7 @@ document.getElementById('rent').addEventListener('click', (e)=>{
             let date2 = new Date(endRent.value)
             let oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             diffDays = Math.abs((date1.getTime() - date2.getTime()) / (oneDay));
+            return diffDays;
         }
         // driveId < 5 20% more
         function CheckExpDriveId() {
@@ -179,41 +178,45 @@ document.getElementById('rent').addEventListener('click', (e)=>{
                 lessCar = "no"
             ]
         }
-        // math
-        function calcRezult() {
-            rezult = rentalPrice * modelTax * diffDays;
+        function calcCombustionFuel(){
+            combustionFuel = (howKm.value * combustion)/100
+        } 
+
+        function rezultNetto() {
+            rezult = (rentalPrice * modelTax * calcDiffDays()) + combustionFuel;
+            return rezult.toFixed(2);
         }
-
-
-
-
-        CalcModelTax();
-        calcDiffDays();
-        calcRezult()
+        function rezultBrutto() {
+            rezult += rezult * 0.23;
+            return rezult.toFixed(2);
+        }
+        checkModelTaxAndCombustion();
         CheckExpDriveId();
         calcCountCar();
-
-
-
+        calcCombustionFuel();
         
+
+
+
         document.getElementById("raport").innerHTML=
         `
-        How day: ${diffDays} </br></br>
+        How day: ${calcDiffDays()} </br></br>
 
         How Km: ${howKm.value} </br>
-        Fuel price: ${fuel} zł </br></br>
+        Fuel price: ${fuel} zł </br>
+        Fuel consumption per 100 km: ${combustion} l </br></br>
 
         Model tax: ${modelTax} zł </br>
-        Rental tax per day: ${rentalPrice} zł </br></br>
+        Car rental tax: ${rentalPrice} zł </br></br>
         
 
         Less than 5 years old driving license (20% more): ${less5dID} </br>
-        Less than 3 cars (15% more): ${lessCar} </br></br>
+        Less than 3 rental cars (15% more): ${lessCar} </br></br>
 
         City: ${localization.value} </br></br>
 
-        Rezult netto: ${rezult}zł </br>
-        Rezult brutto: ${rezult += rezult * 0.23} zł </br>
+        Rezult netto: ${rezultNetto()} zł </br>
+        Rezult brutto: ${rezultBrutto()} zł </br>
         `
     }else{
         document.getElementById("raport").innerHTML = '';
