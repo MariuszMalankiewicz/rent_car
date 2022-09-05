@@ -31,6 +31,7 @@ const city = {
 const howKm = document.getElementById('howKm');
 const fuel = 6.60;
 const rentalPrice = 5;
+const vatTax = 0.23;
 
 const drivingLicence = document.getElementById("drivingId");
 const startRent = document.getElementById("startRent");
@@ -71,7 +72,7 @@ function checkDriving()
     }
     else{
         document.getElementById("limit").innerHTML = "";
-        flag = true;
+        flag = true; 
     }
 }
 function checkFirstDate()  
@@ -103,14 +104,14 @@ function drivingExperience()
         document.getElementById("carListError").innerHTML = "";
     }
 }
-function SameDate()
+function sameDate()
 {
     if(startRent.value === endRent.value && startRent.value != '' && endRent.value != ''){
         document.getElementById("infoEndRent").innerHTML = "min 24 hour";
         flag = false;
     }
 }
-function DateTrickster() {
+function dateTrickster() {
     if(startRent.value > endRent.value && startRent.value != '' && endRent.value != ''){
         document.getElementById("infoEndRent").innerHTML = "you are a trickster";
         flag = false;
@@ -125,105 +126,81 @@ document.getElementById('rent').addEventListener('click', (e)=>{
     checkFirstDate();
     checkSecoundDate();
     drivingExperience();
-    SameDate();
-    DateTrickster();
+    sameDate();
+    dateTrickster();
 
     console.log(flag);
-    if(flag === true){
-        let rezult;
-        let modelTax;
-        let combustion;
-
-        function checkModelTaxAndCombustion() {
-            if(model.value === "basic"){
-                modelTax = 1;
-                combustion = 6;
-            }
-            else if(model.value === "standard"){
-                modelTax = 1.3;
-                combustion = 7.3;
-            }
-            else if(model.value === "medium"){
-                modelTax = 1.6;
-                combustion = 9.6;
-            }
-            else if(model.value === "premium"){
-                modelTax = 2
-                combustion = 12;
-            }  
+    if(flag){
+        let result;   
+        function getCombustion() {
+            if(model.value === "basic"){ return combustion = 6;}
+            if(model.value === "standard"){return combustion = 7.3;}
+            if(model.value === "medium"){return combustion = 9.6;}
+            if(model.value === "premium"){return combustion = 12;}
+        }
+        function getModelTax() {
+            if(model.value === "basic"){ return modelTax = 1;}
+            if(model.value === "standard"){return modelTax = 1.3;}
+            if(model.value === "medium"){return modelTax = 1.6;}
+            if(model.value === "premium"){return modelTax = 2;}
         }
         // diff Date
         function calcDiffDays(){
-            let date1 = new Date(startRent.value)
-            let date2 = new Date(endRent.value)
+            let startDate = new Date(startRent.value)
+            let endDate = new Date(endRent.value)
             let oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-            diffDays = Math.abs((date1.getTime() - date2.getTime()) / (oneDay));
+            diffDays = Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay));
             return diffDays;
         }
         // driveId < 5 20% more
-        function CheckExpDriveId() {
+        function get20PercentTax() {
             if(drivingLicence.value > 2017){
-                rezult += rezult * 0.2;
-                less5dID = 'yes'
-            }else{
-                less5dID = 'no'
-            }     
+                result += result * 0.2;}
         }
         // check count car if < 3 then 15% pay more
         function calcCountCar() {
             if(model.value === "premium" && localization.value === "rzeszow"){
-                rezult += rezult * 0.15;
-                lessCar = "yes"
-            }else[
-                lessCar = "no"
-            ]
+                result += result * 0.15;
+            }
         }
         function calcCombustionFuel(){
-            combustionFuel = (howKm.value * combustion)/100
+            return combustionFuel = (howKm.value * getCombustion())/100
         } 
-
-        function rezultNetto() {
-            rezult = (rentalPrice * modelTax * calcDiffDays()) + combustionFuel;
-            return rezult.toFixed(2);
+        function resultNetto() {
+            result = (rentalPrice * getModelTax() * calcDiffDays()) + calcCombustionFuel();
+            return result.toFixed(2);
         }
-        function rezultBrutto() {
-            rezult += rezult * 0.23;
-            return rezult.toFixed(2);
+        function resultBrutto() {
+            result += result * vatTax;
+            return result.toFixed(2);
         }
-        checkModelTaxAndCombustion();
-        CheckExpDriveId();
+        // checkModelTaxAndCombustion();
+        get20PercentTax();
         calcCountCar();
         calcCombustionFuel();
-        
-
-
 
         document.getElementById("raport").innerHTML=
         `
-        How day: ${calcDiffDays()} </br></br>
+        Rent car for: ${calcDiffDays()} days </br></br>
 
-        How Km: ${howKm.value} </br>
+        Distance to go: ${howKm.value} km </br>
         Fuel price: ${fuel} zł </br>
-        Fuel consumption per 100 km: ${combustion} l </br></br>
+        Fuel consumption model: ${getCombustion()} l </br></br>
 
-        Model tax: ${modelTax} zł </br>
+        Model tax: ${getModelTax()} zł </br>
         Car rental tax: ${rentalPrice} zł </br></br>
-        
-
-        Less than 5 years old driving license (20% more): ${less5dID} </br>
-        Less than 3 rental cars (15% more): ${lessCar} </br></br>
 
         City: ${localization.value} </br></br>
 
-        Rezult netto: ${rezultNetto()} zł </br>
-        Rezult brutto: ${rezultBrutto()} zł </br>
+        Result netto: ${resultNetto()} zł </br>
+        Result brutto: ${resultBrutto()} zł </br>
         `
     }else{
         document.getElementById("raport").innerHTML = '';
         return;
     }
 
-
+    
 })
 
     
