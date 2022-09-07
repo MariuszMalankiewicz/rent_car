@@ -38,16 +38,14 @@ const startRent = document.getElementById("startRent");
 const endRent = document.getElementById("endRent");
 const model = document.getElementById("carList");
 const localization = document.getElementById("location");
-let flag;
-// slider value
+let flag = false;
+
 function sliderValue() {
     howKm.addEventListener("input", ()=>{
         document.getElementById('kmSpan').innerHTML = ` ${howKm.value} km`;
     })
 }
-// Set min att to date
-function minTodayDate(){
-    // let day30 = today * 30;
+function currentDate(){
     let today = new Date();
     let dd = today.getDate();
     let mm = today.getMonth() + 1; //January is 0!
@@ -58,16 +56,28 @@ function minTodayDate(){
     if (mm < 10) {
        mm = '0' + mm;
     }
-    today = yyyy + '-' + mm + '-' + dd;
-
-    startRent.setAttribute("min", today);
-    endRent.setAttribute("min", today);
+    return today = yyyy + '-' + mm + '-' + dd;
 }
-// check info
-function checkDriving()
+function currentYear() {
+    let today = new Date();
+    let yyyy = today.getFullYear();
+    return yyyy;
+}
+function setMinAttDate(callback) {
+    startRent.setAttribute("min", callback);
+    endRent.setAttribute("min", callback);
+}
+function setMaxAttDate(callback) {
+    drivingLicence.setAttribute("max", callback);
+}
+sliderValue();
+setMaxAttDate(currentYear());
+setMinAttDate(currentDate());
+// check
+function checkDriving(callback)
 {
-    if(drivingLicence.value < 1960 || drivingLicence.value > 2022){
-        document.getElementById("limit").innerHTML = "choose form 1960 to 2022";
+    if(drivingLicence.value < 1960 || drivingLicence.value > callback){
+        document.getElementById("limit").innerHTML = `choose form 1960 to ${callback}`;
         flag = false;
     }
     else{
@@ -117,34 +127,47 @@ function dateTrickster() {
         flag = false;
     }
 }
-sliderValue();
-minTodayDate();
-// check send
+
 document.getElementById('rent').addEventListener('click', (e)=>{
     e.preventDefault();
-    checkDriving();
+
+    checkDriving(currentYear());
     checkFirstDate();
     checkSecoundDate();
     drivingExperience();
     sameDate();
     dateTrickster();
-
     console.log(flag);
     if(flag){
         let result;   
-        function getCombustion() {
-            if(model.value === "basic"){ return combustion = 6;}
-            if(model.value === "standard"){return combustion = 7.3;}
-            if(model.value === "medium"){return combustion = 9.6;}
-            if(model.value === "premium"){return combustion = 12;}
+
+        function getModel(){
+            return model.value;
         }
-        function getModelTax() {
-            if(model.value === "basic"){ return modelTax = 1;}
-            if(model.value === "standard"){return modelTax = 1.3;}
-            if(model.value === "medium"){return modelTax = 1.6;}
-            if(model.value === "premium"){return modelTax = 2;}
+        function getModelTaxAndCombustion(calback) {
+            if(calback === "basic"){
+                const tab = [1, 6];
+                return tab;
+            }
+            if(calback === "standard"){
+                const tab = [1.3, 7.3];
+                return tab;
+            }
+            if(calback === "medium"){
+                const tab = [1.6, 9.6];
+                return tab;
+            }
+            if(calback === "premium"){
+                const tab = [2, 12];
+                return tab;
+            }
         }
-        // diff Date
+        // zwraca ile pali na 100km
+        function calcCombustionFuel() {
+            const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
+            return (howKm.value * combustion)/100
+        }
+        // zwraca na ile dni wypozyczenie
         function calcDiffDays(){
             let startDate = new Date(startRent.value)
             let endDate = new Date(endRent.value)
@@ -152,6 +175,7 @@ document.getElementById('rent').addEventListener('click', (e)=>{
             diffDays = Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay));
             return diffDays;
         }
+
         // driveId < 5 20% more
         function get20PercentTax() {
             if(drivingLicence.value > 2017){
@@ -163,21 +187,45 @@ document.getElementById('rent').addEventListener('click', (e)=>{
                 result += result * 0.15;
             }
         }
-        function calcCombustionFuel(){
-            return combustionFuel = (howKm.value * getCombustion())/100
-        } 
+
+
+        // function resultNetto() {
+        //     result = (rentalPrice * getModelTax() * calcDiffDays()) + calcCombustionFuel();
+        //     return result.toFixed(2);
+        // }
+        // function resultBrutto() {
+        //     result += result * vatTax;
+        //     return result.toFixed(2);
+        // }
+
+        // TEST!!!
+
         function resultNetto() {
-            result = (rentalPrice * getModelTax() * calcDiffDays()) + calcCombustionFuel();
-            return result.toFixed(2);
+            const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
+            return  ((rentalPrice * modelTax * calcDiffDays()) + calcCombustionFuel()).toFixed(2);
         }
-        function resultBrutto() {
-            result += result * vatTax;
-            return result.toFixed(2);
+        function ResultBrutto(callback){
+            (callback * vatTax).toFixed(2) + callback
         }
-        // checkModelTaxAndCombustion();
+
+        console.log(resultNetto());
+        console.log(ResultBrutto(resultNetto()));
+
+
+
+
+
+        // //////////////////////////////////////////////
+
+        
+        // Fuel consumption model: ${getCombustion()} l </br></br>
+        // Model tax: ${getModelTax()} zł </br>
+
+        // Result netto: ${resultNetto()} zł </br>
+        // Result brutto: ${resultBrutto()} zł </br>
         get20PercentTax();
+        
         calcCountCar();
-        calcCombustionFuel();
 
         document.getElementById("raport").innerHTML=
         `
@@ -185,15 +233,14 @@ document.getElementById('rent').addEventListener('click', (e)=>{
 
         Distance to go: ${howKm.value} km </br>
         Fuel price: ${fuel} zł </br>
-        Fuel consumption model: ${getCombustion()} l </br></br>
-
-        Model tax: ${getModelTax()} zł </br>
+        
+        
+        
         Car rental tax: ${rentalPrice} zł </br></br>
 
         City: ${localization.value} </br></br>
 
-        Result netto: ${resultNetto()} zł </br>
-        Result brutto: ${resultBrutto()} zł </br>
+
         `
     }else{
         document.getElementById("raport").innerHTML = '';
