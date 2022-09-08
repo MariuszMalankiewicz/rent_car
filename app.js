@@ -1,45 +1,11 @@
-const city = {
-    rzeszow:{
-        basic:{
-            count: 15,
-        },
-        standard:{
-            count: 10,
-        },
-        medium:{
-            count: 5,
-        },
-        premium:{
-            count: 1,
-        }
-    },
-    krakow:{
-        basic:{
-            count: 30,
-        },
-        standard:{
-            count: 15,
-        },
-        medium:{
-            count: 10,
-        },
-        premium:{
-            count: 3,
-        }
-    }
-}
 const howKm = document.getElementById('howKm');
 const fuel = 6.60;
 const rentalPrice = 5;
 const vatTax = 0.23;
 
-const drivingLicence = document.getElementById("drivingId");
-const startRent = document.getElementById("startRent");
-const endRent = document.getElementById("endRent");
-const model = document.getElementById("carList");
-const localization = document.getElementById("location");
-let flag = false;
 
+
+// Get
 function sliderValue() {
     howKm.addEventListener("input", ()=>{
         document.getElementById('kmSpan').innerHTML = ` ${howKm.value} km`;
@@ -63,51 +29,70 @@ function currentYear() {
     let yyyy = today.getFullYear();
     return yyyy;
 }
-function setMinAttDate(callback) {
-    startRent.setAttribute("min", callback);
-    endRent.setAttribute("min", callback);
+function getModel(){
+    const model = document.getElementById("carList");
+    return model.value;
 }
-function setMaxAttDate(callback) {
-    drivingLicence.setAttribute("max", callback);
+function getDriveId(){
+    const drivingLicence = document.getElementById("drivingId");
+    return drivingLicence;
+}
+function getStartRent() {
+    const startRent = document.getElementById("startRent");
+    return startRent;
+}
+function getEndRent() {
+    const endRent = document.getElementById("endRent");
+    return endRent;
+}
+// set
+function setMinAttDate(getStartRent, getEndRent, currentDate) {
+    getStartRent.setAttribute("min", currentDate);
+    getEndRent.setAttribute("min", currentDate);
+}
+function setMaxAttDate(currentYear, getDriveId) {
+    getDriveId.setAttribute("max", currentYear);
 }
 sliderValue();
-setMaxAttDate(currentYear());
-setMinAttDate(currentDate());
+setMaxAttDate(currentYear(), getDriveId());
+setMinAttDate(getStartRent(), getEndRent(), currentDate());
+
+
+
 // check
-function checkDriving(callback)
+function checkDriving(currentYear, getDriveId)
 {
-    if(drivingLicence.value < 1960 || drivingLicence.value > callback){
-        document.getElementById("limit").innerHTML = `choose form 1960 to ${callback}`;
-        flag = false;
+    if(getDriveId.value < 1960 || getDriveId.value > currentYear){
+        document.getElementById("limit").innerHTML = `choose form 1960 to ${currentYear}`;
+        return flag = false;
     }
     else{
         document.getElementById("limit").innerHTML = "";
-        flag = true; 
+        return flag = true; 
     }
 }
-function checkFirstDate()  
-{
-    // first date
-    if(startRent.value === ''){
+function checkFirstDate(getStartRent){   
+    if(getStartRent.value === ''){
         document.getElementById("infoStartRent").innerHTML = "choose date!";
-        flag = false;
+        return flag = false;
     }else{
         document.getElementById("infoStartRent").innerHTML = "";
-        flag = true;
+        return flag = true;
     }    
 }
-function checkSecoundDate() {
-    if(endRent.value === ''){
+function checkSecoundDate(getEndRent) {
+    if(getEndRent.value === ''){
         document.getElementById("infoEndRent").innerHTML = "choose date!";
-        flag = false;
+        return flag = false;
     }else{
         document.getElementById("infoEndRent").innerHTML = "";
-        flag = true;
+        return flag = true;
     }
 }
-function drivingExperience()
+
+function drivingExperience(getModel, getDriveId)
 {
-    if(drivingLicence.value > 2019 && model.value === "premium"){
+    if(getDriveId.value > 2019 && getModel === "premium"){
         document.getElementById("carListError").innerHTML = "you have too little driving experience";
         flag = false;
     }else{
@@ -131,19 +116,13 @@ function dateTrickster() {
 document.getElementById('rent').addEventListener('click', (e)=>{
     e.preventDefault();
 
-    checkDriving(currentYear());
-    checkFirstDate();
-    checkSecoundDate();
-    drivingExperience();
+    
+    
+    drivingExperience(getModel(), getDriveId());
     sameDate();
     dateTrickster();
-    console.log(flag);
-    if(flag){
-        let result;   
+    if(checkDriving(currentYear(), getDriveId()) === true && checkFirstDate(getStartRent()) === true && checkSecoundDate(getEndRent()) === true){
 
-        function getModel(){
-            return model.value;
-        }
         function getModelTaxAndCombustion(calback) {
             if(calback === "basic"){
                 const tab = [1, 6];
@@ -162,12 +141,10 @@ document.getElementById('rent').addEventListener('click', (e)=>{
                 return tab;
             }
         }
-        // zwraca ile pali na 100km
         function calcCombustionFuel() {
             const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
             return (howKm.value * combustion)/100
         }
-        // zwraca na ile dni wypozyczenie
         function calcDiffDays(){
             let startDate = new Date(startRent.value)
             let endDate = new Date(endRent.value)
@@ -175,72 +152,21 @@ document.getElementById('rent').addEventListener('click', (e)=>{
             diffDays = Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay));
             return diffDays;
         }
-
-        // driveId < 5 20% more
-        function get20PercentTax() {
-            if(drivingLicence.value > 2017){
-                result += result * 0.2;}
-        }
-        // check count car if < 3 then 15% pay more
-        function calcCountCar() {
-            if(model.value === "premium" && localization.value === "rzeszow"){
-                result += result * 0.15;
-            }
-        }
-
-
-        // function resultNetto() {
-        //     result = (rentalPrice * getModelTax() * calcDiffDays()) + calcCombustionFuel();
-        //     return result.toFixed(2);
-        // }
-        // function resultBrutto() {
-        //     result += result * vatTax;
-        //     return result.toFixed(2);
-        // }
-
-        // TEST!!!
-
         function resultNetto() {
             const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
-            return  ((rentalPrice * modelTax * calcDiffDays()) + calcCombustionFuel()).toFixed(2);
+            const result = ((rentalPrice * modelTax * calcDiffDays()) + calcCombustionFuel());
+            return result.toFixed(2);
         }
-        function ResultBrutto(callback){
-            (callback * vatTax).toFixed(2) + callback
+        function resultBrutto(resultNetto){
+            const brutto = Number(resultNetto) * vatTax;
+            result = Number(resultNetto) + brutto;
+            return result.toFixed(2);
         }
-
         console.log(resultNetto());
-        console.log(ResultBrutto(resultNetto()));
-
-
-
-
-
-        // //////////////////////////////////////////////
-
-        
-        // Fuel consumption model: ${getCombustion()} l </br></br>
-        // Model tax: ${getModelTax()} zł </br>
-
-        // Result netto: ${resultNetto()} zł </br>
-        // Result brutto: ${resultBrutto()} zł </br>
-        get20PercentTax();
-        
-        calcCountCar();
+        console.log(resultBrutto(resultNetto()));
 
         document.getElementById("raport").innerHTML=
-        `
-        Rent car for: ${calcDiffDays()} days </br></br>
-
-        Distance to go: ${howKm.value} km </br>
-        Fuel price: ${fuel} zł </br>
-        
-        
-        
-        Car rental tax: ${rentalPrice} zł </br></br>
-
-        City: ${localization.value} </br></br>
-
-
+        `ok
         `
     }else{
         document.getElementById("raport").innerHTML = '';
@@ -250,10 +176,9 @@ document.getElementById('rent').addEventListener('click', (e)=>{
     
 })
 
-    
 
-
-
-
-
-        
+        // driveId < 5 20% more
+        // function get20PercentTax(getDriveId) {
+        //     if(getDriveId.value > 2017){
+        //         result += result * 0.2;}
+        // }
