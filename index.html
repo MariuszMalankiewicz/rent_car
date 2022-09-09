@@ -13,8 +13,11 @@
     <form>
         <fieldset>
             <legend>Rent Your Car</legend>
-            <label for="howKm">Choose your distance to go<span id="kmSpan"> 100 km</span></label>
-            <input type="range" id="howKm" min="50" max="500" value="100">
+            <div id="wrapperDistance">
+                <label for="distance">Choose your distance to go<span > 100 km</span></label>
+                <input type="range" min="50" max="1000" value="100">
+            </div>
+
             <label for="drivingd">Driving licence</label>
             <input type="number" id="drivingId" value="2022" min="1960">
             <span class="error" id="limit"></span>

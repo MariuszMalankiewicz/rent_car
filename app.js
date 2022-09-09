@@ -1,16 +1,21 @@
-const howKm = document.getElementById('howKm');
 const fuel = 6.60;
 const rentalPrice = 5;
 const vatTax = 0.23;
-
-
-
 // Get
-function sliderValue() {
-    howKm.addEventListener("input", ()=>{
-        document.getElementById('kmSpan').innerHTML = ` ${howKm.value} km`;
-    })
+function getKm() {
+    const wrapperDistance = document.getElementById('wrapperDistance');
+    const distance = wrapperDistance.getElementsByTagName('input');
+    return distance;
 }
+function sliderValue(getKm) {
+    getKm.addEventListener("input", ()=>{
+        // document.getElementById('kmSpan').innerHTML = ` ${howKm.value} km`;
+        console.log(getKm);
+    })    
+}
+sliderValue(getKm());
+
+
 function currentDate(){
     let today = new Date();
     let dd = today.getDate();
@@ -22,12 +27,9 @@ function currentDate(){
     if (mm < 10) {
        mm = '0' + mm;
     }
-    return today = yyyy + '-' + mm + '-' + dd;
-}
-function currentYear() {
-    let today = new Date();
-    let yyyy = today.getFullYear();
-    return yyyy;
+    today = yyyy + '-' + mm + '-' + dd;
+    const tab = [dd, mm, yyyy, today]
+    return tab;
 }
 function getModel(){
     const model = document.getElementById("carList");
@@ -46,104 +48,99 @@ function getEndRent() {
     return endRent;
 }
 // set
-function setMinAttDate(getStartRent, getEndRent, currentDate) {
-    getStartRent.setAttribute("min", currentDate);
-    getEndRent.setAttribute("min", currentDate);
+function setMinAndMaxAttDate(getStartRent, getEndRent, getDriveId) {
+    const [dd, mm, yyyy, today] = currentDate()
+    getStartRent.setAttribute("min", today);
+    getEndRent.setAttribute("min", today);
+    getDriveId.setAttribute("max", yyyy);
 }
-function setMaxAttDate(currentYear, getDriveId) {
-    getDriveId.setAttribute("max", currentYear);
-}
-sliderValue();
-setMaxAttDate(currentYear(), getDriveId());
-setMinAttDate(getStartRent(), getEndRent(), currentDate());
 
-
-
+setMinAndMaxAttDate(getStartRent(), getEndRent(), getDriveId());
 // check
-function checkDriving(currentYear, getDriveId)
+function checkDriving(getDriveId)
 {
-    if(getDriveId.value < 1960 || getDriveId.value > currentYear){
-        document.getElementById("limit").innerHTML = `choose form 1960 to ${currentYear}`;
-        return flag = false;
+    const [dd, mm, yyyy, today] = currentDate();
+    if(getDriveId.value < 1960 || getDriveId.value > yyyy){
+        document.getElementById("limit").innerHTML = `choose form 1960 to ${yyyy}`;
+        return false;
     }
     else{
         document.getElementById("limit").innerHTML = "";
-        return flag = true; 
+        return true; 
     }
 }
 function checkFirstDate(getStartRent){   
     if(getStartRent.value === ''){
         document.getElementById("infoStartRent").innerHTML = "choose date!";
-        return flag = false;
+        return false;
     }else{
         document.getElementById("infoStartRent").innerHTML = "";
-        return flag = true;
+        return true;
     }    
 }
 function checkSecoundDate(getEndRent) {
     if(getEndRent.value === ''){
         document.getElementById("infoEndRent").innerHTML = "choose date!";
-        return flag = false;
+        return false;
     }else{
         document.getElementById("infoEndRent").innerHTML = "";
-        return flag = true;
+        return true;
     }
 }
-
 function drivingExperience(getModel, getDriveId)
 {
     if(getDriveId.value > 2019 && getModel === "premium"){
         document.getElementById("carListError").innerHTML = "you have too little driving experience";
-        flag = false;
+        return false;
     }else{
         document.getElementById("carListError").innerHTML = "";
+        return true;
     }
 }
 function sameDate()
 {
     if(startRent.value === endRent.value && startRent.value != '' && endRent.value != ''){
         document.getElementById("infoEndRent").innerHTML = "min 24 hour";
-        flag = false;
+        return false;
+    }else{
+        document.getElementById("infoEndRent").innerHTML = "";
+        return true;
     }
 }
 function dateTrickster() {
     if(startRent.value > endRent.value && startRent.value != '' && endRent.value != ''){
         document.getElementById("infoEndRent").innerHTML = "you are a trickster";
-        flag = false;
+        return false;
+    }else{
+        document.getElementById("infoEndRent").innerHTML = "";
+        return true;
     }
 }
-
 document.getElementById('rent').addEventListener('click', (e)=>{
     e.preventDefault();
+    if(checkDriving(getDriveId()) === true && checkFirstDate(getStartRent()) === true && checkSecoundDate(getEndRent()) === true && drivingExperience(getModel(), getDriveId()) === true && sameDate() === true && dateTrickster() === true){
 
-    
-    
-    drivingExperience(getModel(), getDriveId());
-    sameDate();
-    dateTrickster();
-    if(checkDriving(currentYear(), getDriveId()) === true && checkFirstDate(getStartRent()) === true && checkSecoundDate(getEndRent()) === true){
-
-        function getModelTaxAndCombustion(calback) {
-            if(calback === "basic"){
+        function getModelTaxAndCombustion(getModel) {
+            if(getModel === "basic"){
                 const tab = [1, 6];
                 return tab;
             }
-            if(calback === "standard"){
+            if(getModel === "standard"){
                 const tab = [1.3, 7.3];
                 return tab;
             }
-            if(calback === "medium"){
+            if(getModel === "medium"){
                 const tab = [1.6, 9.6];
                 return tab;
             }
-            if(calback === "premium"){
+            if(getModel === "premium"){
                 const tab = [2, 12];
                 return tab;
             }
         }
-        function calcCombustionFuel() {
+        function calcCombustionFuel(getKm) {
             const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
-            return (howKm.value * combustion)/100
+            return (getKm.value * combustion)/100
         }
         function calcDiffDays(){
             let startDate = new Date(startRent.value)
@@ -154,7 +151,7 @@ document.getElementById('rent').addEventListener('click', (e)=>{
         }
         function resultNetto() {
             const [modelTax, combustion] = getModelTaxAndCombustion(getModel());
-            const result = ((rentalPrice * modelTax * calcDiffDays()) + calcCombustionFuel());
+            const result = ((rentalPrice * modelTax * calcDiffDays()) + calcCombustionFuel(getKm()));
             return result.toFixed(2);
         }
         function resultBrutto(resultNetto){
@@ -170,13 +167,8 @@ document.getElementById('rent').addEventListener('click', (e)=>{
         `
     }else{
         document.getElementById("raport").innerHTML = '';
-        return;
     }
-
-    
 })
-
-
         // driveId < 5 20% more
         // function get20PercentTax(getDriveId) {
         //     if(getDriveId.value > 2017){
