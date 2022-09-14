@@ -10,43 +10,61 @@
 </head>
 
 <body>
-    <form>
-        <fieldset>
-            <legend>Rent Your Car</legend>
-            <div id="wrapperDistance">
-                <label for="distance">Choose your distance to go<span > 100 km</span></label>
-                <input type="range" min="50" max="1000" value="100">
-            </div>
-
-            <label for="drivingd">Driving licence</label>
-            <input type="number" id="drivingId" value="2022" min="1960">
-            <span class="error" id="limit"></span>
-            <label for="startRent">Start rent</label>
-            <input type="date" id="startRent">
-            <span class="error" id="infoStartRent"></span>
-            <label for="endRent">End rent</label>
-            <input type="date" id="endRent">
-            <span class="error" id="infoEndRent"></span>
-            <label for="carList">Select your model</label>
-            <select name="carList" id="carList">
-                <option value="basic">basic</option>
-                <option value="standard">standard</option>
-                <option value="medium">medium</opt>
-                <option value="premium">premium</option>
-            </select>
-            <span class="error" id="carListError"></span>
-            <label for="location">select your location</label>
-            <select name="location" id="location">
-                <option value="rzeszow">Rzeszów</option>
-                <option value="krakow">Kraków</option>
-            </select>
-            <button type="submit" id="rent">Rent Car</button>
-        </fieldset>
-    </form>
-    <div>
-        <h1>Car rent raport</h1>
+    <div class="wrapper-form">
         <div>
-            <p id="raport"></p>
+            <h1>Rent Calculator</h1>
+            <p>Use the rental calculator to calculate the rental price and its components</p>
+        </div>
+        <form>
+            <div id="wrapperDistance">
+                <div class="center-col">
+                    <label for="distance"><h3>Choose your distance to go</h3><span > 100 km</span></label>
+                    <input type="range" min="50" max="1000" value="100">
+                </div>
+            </div>
+            <div id="wrapperDriving">
+                    <label for="drivingId"><h3>Driving licence</h3></label>
+                    <input type="number"  value="2022" min="1960">
+                    <span class="error"></span>
+            </div>
+            <div id="wrapperStartRent">
+                    <label for="startRent"><h3>Start rent</h3></label>
+                    <input type="date">
+                    <span class="error"></span>
+            </div>
+            <div id="wrapperEndRent">
+                    <label for="endRent"><h3>End rent</h3></label>
+                    <input type="date">
+                    <span class="error"></span>
+            </div>
+            <div id="wrapperCarList">
+                    <label for="carList"><h3>Select your model</h3></label>
+                    <select name="carList">
+                        <option value="basic">basic</option>
+                        <option value="standard">standard</option>
+                        <option value="medium">medium</opt>
+                        <option value="premium">premium</option>
+                    </select>
+                    <span class="error"></span>
+            </div>
+            <div id="wrapperLocation">
+                <label for="location"><h3>Select your location</h3></label>
+                <select name="location">
+                        <option value="rzeszow">Rzeszów</option>
+                </select>
+                <span class="error"></span>
+            </div>
+            <button type="submit" id="rent"><h3>Rent Car</h2></button>
+        </form>
+        <div>
+            <h1 id="raport">Rent Raport</h1>
+            <p>Distance to go</p>
+            <p>Days of rent</p>
+            <p>rental price</p>
+            <p>model tax</p>
+            <p>fuel consumption per 100 km</p>
+            <p>netto cost</p>
+            <p>brutto cost</p> -->
         </div>
     </div>
 
