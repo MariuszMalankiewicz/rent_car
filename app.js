@@ -207,14 +207,19 @@ document.getElementById("rent").addEventListener("click", (e) => {
       result = Number(resultNetto) + brutto;
       return result.toFixed(2);
     }
-    console.log(resultNetto());
-    console.log(resultBrutto(resultNetto()));
-
     const [wrapperDistance, distance, spanText] = getDistance();
+    const [modelTax, combustion] = getModelTaxAndCombustion();
 
-    const wrapperRaport = document.getElementById("raport");
-    const rDistance = wrapperRaport.getElementsByTagName("p")[0];
-    rDistance.innerHTML = "OK";
+    document.getElementById("raport").innerHTML = `
+    <h1>Raport rent<h1>
+    <p>Distance to go: ${distance.value} Km</p>
+    <p>Days of rent: ${calcDiffDays()} Days</p>
+    <p>Rental price: ${rentalPrice} Zł</p>
+    <p>Model tax: ${modelTax} Zł</p>
+    <p>Fuel consumption: ${combustion} L/100km</p>
+    <p>Netto cost: ${resultNetto()} zł</p>
+    <p>Brutto cost: ${resultBrutto(resultNetto())} Zł</p>
+    `;
   } else {
     document.getElementById("raport").innerHTML = "";
   }
