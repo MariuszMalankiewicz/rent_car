@@ -1,66 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style/style.css">
     <title>Calculator rent car</title>
 </head>
-
 <body>
-    <div class="wrapper-form">
-        <div>
-            <h1>Rent Calculator</h1>
-            <p>Use the rental calculator to calculate the rental price and its components</p>
-        </div>
-        <form>
-            <div id="wrapperDistance">
-                <div class="center-col">
-                    <label for="distance"><h3>Choose your distance to go</h3><span > 100 km</span></label>
-                    <input type="range" min="50" max="1000" value="100">
-                </div>
-            </div>
-            <div id="wrapperDriving">
-                    <label for="drivingId"><h3>Driving licence</h3></label>
-                    <input type="number"  value="2022" min="1960">
-                    <span class="error"></span>
-            </div>
-            <div id="wrapperStartRent">
-                    <label for="startRent"><h3>Start rent</h3></label>
-                    <input type="date">
-                    <span class="error"></span>
-            </div>
-            <div id="wrapperEndRent">
-                    <label for="endRent"><h3>End rent</h3></label>
-                    <input type="date">
-                    <span class="error"></span>
-            </div>
-            <div id="wrapperCarList">
-                    <label for="carList"><h3>Select your model</h3></label>
-                    <select name="carList">
-                        <option value="basic">basic</option>
-                        <option value="standard">standard</option>
-                        <option value="medium">medium</opt>
-                        <option value="premium">premium</option>
-                    </select>
-                    <span class="error"></span>
-            </div>
-            <div id="wrapperLocation">
-                <label for="location"><h3>Select your location</h3></label>
-                <select name="location">
-                        <option value="rzeszow">Rzeszów</option>
-                </select>
-                <span class="error"></span>
-            </div>
-            <button type="submit" id="rent"><h3>Rent Car</h2></button>
-        </form>
-        <div id="raport">
-        </div>
+    <div>
+        <h1>Rent Calculator</h1>
+        <p>Use the rental calculator to calculate the rental price and its components</p>
     </div>
-
-    <script src="app.js"></script>
+    <form id="form">
+        <div>
+            <label for="distance"><h3>Choose your distance to go</h3><span> 100 km</span></label>
+            <input type="range" min="50" max="1000" value="100" name="slider">
+        </div>
+        <div>
+            <label for="drivingLicence"><h3>Driving licence</h3></label>
+            <input type="number" name="drivingLicence">
+            <span class="error"></span>
+        </div>
+        <div>
+            <label for="Pickup location"><h3>Pickup location</h3></label>
+            <select name="Pickuplocation">
+                <option value="rzeszow">Rzeszow</option>
+            </select>
+                
+            <span class="error"></span>
+        </div>
+        <div>
+            <label for="rentDate"><h3>Rent date</h3></label>
+            <input type="date" name="rentDate">
+            <span class="error"></span>
+        </div>
+        <div>
+            <label for="Returnlocation"><h3>Return location</h3></label>
+            <select name="Returnlocation">
+                <option value="rzeszow">Rzeszow</option>
+            </select>
+            <span class="error"></span>
+        </div>
+        <div>
+            <label for="returnDate"><h3>Return date</h3></label>
+            <input type="date" name="returnDate">
+            <span class="error"></span>
+        </div>
+        <div>
+            <label for="carList"><h3>Find a car</h3></label>
+            <select name="carList">
+                <option value="basic">basic</option>
+            </select>
+            <span class="error"></span>
+        </div>
+        <button type="submit"><h3>Rent Car</h2></button>
+    </form>
+    <div id="raport">
+    </div>
+    <script type="module" src="/script/validation.js"></script>
+    <script type="module" src="/script/calcRentCar.js"></script>
 </body>
 
 </html>
