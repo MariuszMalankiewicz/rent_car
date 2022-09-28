@@ -1,19 +1,46 @@
-import {
-  getCurrentDate,
-  checkDrivingId,
-  checkPickupLocation,
-  checkRentDate,
-  checkReturnLocation,
-  checkReturnDate,
-  checkSameDate,
-  checkDataTrickster,
-  checkFindCar,
-} from "./validation.js";
-
+import { validation } from "./validation.js";
 const fuel = 6.6;
-const rentalPrice = 5;
+const rentalPrice = 20;
 const vatTax = 0.23;
 
+const cars = [
+  {
+    id: 0,
+    mark: "Fiat",
+    model: "500",
+    location: "Rzeszów, Millenium Hall",
+    avalibility: 20,
+    combsustion: 6,
+    category: "Basic",
+  },
+  {
+    id: 1,
+    mark: "Kia",
+    model: "Rio",
+    location: "Rzeszów, Galeria Rzeszów",
+    avalibility: 10,
+    combsustion: 8,
+    category: "Standard",
+  },
+  {
+    id: 2,
+    mark: "Audi",
+    model: "A6",
+    location: "Rzeszów, Krasne Auchan",
+    avalibility: 5,
+    combsustion: 12,
+    category: "Medium",
+  },
+  {
+    id: 3,
+    mark: "Mercedes-Benz",
+    model: "Klasa A",
+    location: "Rzeszów, Galeria Nowy Świat",
+    avalibility: 2,
+    combsustion: 18,
+    category: "Premium",
+  },
+];
 (function () {
   const form = document.getElementById("form");
   const slider = form.querySelector("input[name=slider]");
@@ -22,61 +49,45 @@ const vatTax = 0.23;
     spanSlider.textContent = ` ${slider.value} Km`;
   });
 })();
+cars.forEach((car) => {
+  const form = document.getElementById("form");
+  const pickupLocation = form.querySelector("select[name=pickuplocation]");
+  const returnLocation = form.querySelector("select[name=Returnlocation]");
+  const carList = form.querySelector("select[name=carList]");
+  pickupLocation.innerHTML += `<option value="${car.id} ${car.location}">${car.location}</option>`;
+  returnLocation.innerHTML += `<option value="${car.id} ${car.location}">${car.location}</option>`;
+  carList.innerHTML += `<option value="${car.category} ${car.combsustion} ${car.avalibility}">Mark: ${car.mark}, Model: ${car.model}, Category: ${car.category}, Combsustion: ${car.combsustion}, Avalibility: ${car.avalibility}</option>`;
+});
 
 document.getElementById("form").addEventListener("submit", (e) => {
   e.preventDefault();
-  checkDrivingId();
-  checkPickupLocation();
-  checkRentDate();
-  checkReturnLocation();
-  checkReturnDate();
-  checkSameDate();
-  checkDataTrickster();
-  checkFindCar();
-  console.log(checkDrivingId());
-  console.log(checkPickupLocation());
-  console.log(checkRentDate());
-  console.log(checkReturnLocation());
-  console.log(checkReturnDate());
-  console.log(checkSameDate());
-  console.log(checkDataTrickster());
-  console.log(checkFindCar());
-  if (
-    checkDrivingId() === true &&
-    checkPickupLocation() === true &&
-    checkRentDate() === true &&
-    checkReturnLocation() === true &&
-    checkReturnDate() === true &&
-    checkSameDate() === true &&
-    checkDataTrickster() === true &&
-    checkFindCar() === true
-  ) {
+  validation();
+  if (validation() === true) {
     console.log("OK");
+    function getModelTaxAndCombustion() {
+      const form = document.getElementById("form");
+      const carList = form.querySelector("select[name=carList]");
+      console.log(carList.value);
+      if (carList.value == 0) {
+        return 1;
+      }
+      if (carList.value == 1) {
+        return 1.3;
+      }
+      if (carList.value == 2) {
+        return 1.6;
+      }
+      if (carList.value == 3) {
+        return 2;
+      }
+    }
+    getModelTaxAndCombustion();
+    console.log(getModelTaxAndCombustion());
   } else {
     console.log("error");
   }
 });
 
-//     function getModelTaxAndCombustion() {
-//       const form = document.getElementById("form");
-//       const carList = form.querySelector("select[name=carList]");
-//       if (carList.value === "basic") {
-//         const tab = [1, 6];
-//         return tab;
-//       }
-//       if (carList.value === "standard") {
-//         const tab = [1.3, 7.3];
-//         return tab;
-//       }
-//       if (carList.value === "medium") {
-//         const tab = [1.6, 9.6];
-//         return tab;
-//       }
-//       if (carList.value === "premium") {
-//         const tab = [2, 12];
-//         return tab;
-//       }
-//     }
 //     function calcCombustionFuel() {
 //       const slider = form.querySelector("input[name=slider]");
 //       return (slider.value * combustion) / 100;
