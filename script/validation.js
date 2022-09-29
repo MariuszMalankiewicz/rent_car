@@ -15,6 +15,7 @@ function validation() {
     const currentDate = [today, yyyy, mm, dd];
     return currentDate;
   }
+
   (function () {
     const form = document.getElementById("form");
     const rentDate = form.querySelector("input[name=rentDate]");
@@ -136,6 +137,20 @@ function validation() {
       return true;
     }
   }
+  function checkDrivingExperience() {
+    const form = document.getElementById("form");
+    const drivingLicence = form.querySelector("input[name=drivingLicence]");
+    const carList = form.querySelector("select[name=carList]");
+    const spanError = form.querySelectorAll("span");
+    const [, yyyy, ,] = getCurrentDate();
+    if (drivingLicence.value > yyyy - 3 && carList.value == 3) {
+      spanError[6].innerHTML = "you have too little driving experience";
+      return false;
+    } else {
+      spanError[6].innerHTML = "";
+      return true;
+    }
+  }
   if (
     checkDrivingId() === true &&
     checkPickupLocation() === true &&
@@ -144,23 +159,10 @@ function validation() {
     checkReturnDate() === true &&
     checkSameDate() === true &&
     checkDataTrickster() === true &&
-    checkFindCar() === true
+    checkFindCar() === true &&
+    checkDrivingExperience() === true
   ) {
     return true;
   } else return false;
 }
 export { validation };
-
-// function checkDrivingExperience() {
-//   const form = document.getElementById("form");
-//   const drivingLicence = form.querySelector("input[name=drivingLicence]");
-//   const carList = form.querySelector("select[name=carList]");
-//   const spanError = form.querySelectorAll("span");
-//   if (drivingLicence.value > 2019 && carList.value === "premium") {
-//     spanError[6].innerHTML = "you have too little driving experience";
-//     return false;
-//   } else {
-//     spanError[6].innerHTML = "";
-//     return true;
-//   }
-// }
