@@ -1,9 +1,12 @@
-# rent_car
+# Car rental calculator project
 
-car rental calculator project, in this project i used technology:
+Used technology:
 Html
 Css
-Java script
+Java Script
+
+
+The structure of the project is dealt with by html, the appearance of the project is dealt with by css, and all logic, i.e. validation and java script calculations
 
 
 Live: https://mariuszmalankiewicz.github.io/rent_car/
