@@ -1,9 +1,10 @@
 # Car rental calculator project
 
 Used technology:
-
 Html
+
 Css
+
 Java Script
 
 
